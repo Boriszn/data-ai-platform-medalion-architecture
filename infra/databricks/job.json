@@ -1,0 +1,28 @@
+{
+  "name": "data-ai-ex2-payroll-medallion",
+  "tasks": [
+    {
+      "task_key": "run_pipeline",
+      "notebook_task": {
+        "notebook_path": "/Repos/<user-or-org>/<repo>/notebooks/run_pipeline_dbx",
+        "base_parameters": {
+          "input_dir": "abfss://data-ai-ex2@<storage-account>.dfs.core.windows.net/raw",
+          "output_dir": "abfss://data-ai-ex2@<storage-account>.dfs.core.windows.net"
+        }
+      },
+      "new_cluster": {
+        "spark_version": "<SPARK_VERSION>",
+        "node_type_id": "<NODE_TYPE_ID>",
+        "num_workers": 0,
+        "autotermination_minutes": 10,
+        "spark_conf": {
+          "spark.databricks.cluster.profile": "singleNode"
+        },
+        "custom_tags": {
+          "ResourceClass": "SingleNode",
+          "Project": "data-ai-ex2"
+        }
+      }
+    }
+  ]
+}

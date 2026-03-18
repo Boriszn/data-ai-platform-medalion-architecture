@@ -1,0 +1,7 @@
+resource_group_name                  = "rg-data-ai-ex2"
+location                             = "westeurope"
+databricks_workspace_name            = "dbw-data-ai-ex2"
+existing_storage_account_name        = "<existing-adls-name>"
+existing_storage_account_resource_group = "<existing-adls-rg>"
+adls_filesystem_name                 = "data-ai-ex2"
+adls_paths                           = ["raw", "bronze", "silver", "gold"]

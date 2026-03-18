@@ -1,0 +1,14 @@
+{
+  "cluster_name": "data-ai-ex2-job-cluster-template",
+  "spark_version": "<SPARK_VERSION>",
+  "node_type_id": "<NODE_TYPE_ID>",
+  "num_workers": 0,
+  "autotermination_minutes": 10,
+  "spark_conf": {
+    "spark.databricks.cluster.profile": "singleNode"
+  },
+  "custom_tags": {
+    "ResourceClass": "SingleNode",
+    "Project": "data-ai-ex2"
+  }
+}
