@@ -6,6 +6,7 @@ from src.main import run_pipeline
 dbutils.widgets.text("input_dir", "")
 dbutils.widgets.text("output_dir", "")
 
+
 # Defaults (used if widgets are empty)
 default_input_dir  = "abfss://data-ai-platform@datalakecrpprdswn002.dfs.core.windows.net/raw"
 default_output_dir = "abfss://data-ai-platform@datalakecrpprdswn002.dfs.core.windows.net"
@@ -20,4 +21,4 @@ else:
 # Optional: set HMAC key via Databricks secrets and environment variables.
 # os.environ["AFILEON_HMAC_KEY"] = dbutils.secrets.get(scope="<scope>", key="afileon-hmac-key")
 
-run_pipeline(input_dir=input_dir, output_dir=output_dir)
+run_pipeline(input_dir=str(input_dir), output_dir=str(output_dir))

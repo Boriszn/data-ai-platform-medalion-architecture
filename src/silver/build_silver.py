@@ -31,6 +31,10 @@ def _employee_key(employee_id: str, key: bytes) -> str:
 def build_silver(df_bronze: pd.DataFrame) -> pd.DataFrame:
     df = df_bronze.copy()
 
+    # type casting FIRST (Spark->pandas often yields strings)
+    for c in [COLS.gross_amount, COLS.taxes_amount, COLS.net_amount]:
+        df[c] = pd.to_numeric(df[c], errors="raise")
+
     # basic validations on raw values
     require_no_nulls(df, df.columns)
     require_pay_period_format(df)
