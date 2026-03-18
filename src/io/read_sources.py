@@ -8,17 +8,22 @@ import pandas as pd
 
 from ..config import REQUIRED_INPUT_COLUMNS
 
+try:
+    from databricks.sdk.runtime import dbutils  # available in Databricks runtime
+except Exception:
+    dbutils = None
+
 
 def find_input_files(input_dir: str):
     if input_dir.startswith("abfss://"):
-        # Databricks listing
-        items = dbutils.fs.ls(input_dir)  # noqa: F821 (dbutils exists in Databricks)
-        files = sorted([x.path for x in items if x.path.endswith(".csv") and "payroll_transactions_" in x.name])
+        if dbutils is None:
+            raise RuntimeError("Databricks dbutils is required to list abfss paths.")
+        items = dbutils.fs.ls(input_dir)
+        files = sorted([x.path for x in items if x.name.startswith("payroll_transactions_") and x.name.endswith(".csv")])
         if not files:
             raise FileNotFoundError(f"No input CSV files found at: {input_dir}")
         return files
 
-    # Local listing
     pattern = os.path.join(input_dir, "payroll_transactions_*.csv")
     files = sorted(glob.glob(pattern))
     if not files:
