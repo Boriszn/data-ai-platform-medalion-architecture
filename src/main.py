@@ -20,8 +20,34 @@ from .gold.auditor_totals import build_auditor_cross_subsidiary_totals
 
 
 def _setup_logging(log_dir: str) -> str:
+    """
+    Create a log file location that works both locally and on Databricks.
+
+    - Local runs: write logs into <output_dir>/logs/run.log
+    - Databricks runs with abfss output: write logs to /dbfs/tmp/... (ABFSS is not a local FS path)
+    """
+    import os
+    import logging
+    import datetime as dt
+
+    def _is_abfss(p: str) -> bool:
+        return isinstance(p, str) and p.startswith("abfss://")
+
+    # If logs are targeting ABFSS, switch to a local DBFS path
+    if _is_abfss(log_dir):
+        log_dir = "/dbfs/tmp/afileon_ex2_logs"
+
     os.makedirs(log_dir, exist_ok=True)
-    log_path = os.path.join(log_dir, "run.log")
+
+    # Use a timestamped filename to avoid collisions across runs
+    ts = dt.datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+    log_path = os.path.join(log_dir, f"run-{ts}.log")
+
+    # Reset handlers if the notebook/job re-runs in the same Python process
+    root = logging.getLogger()
+    for h in list(root.handlers):
+        root.removeHandler(h)
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)sZ %(levelname)s %(message)s",
@@ -30,6 +56,7 @@ def _setup_logging(log_dir: str) -> str:
             logging.StreamHandler(),
         ],
     )
+
     return log_path
 
 
