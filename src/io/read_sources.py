@@ -9,7 +9,16 @@ import pandas as pd
 from ..config import REQUIRED_INPUT_COLUMNS
 
 
-def find_input_files(input_dir: str) -> List[str]:
+def find_input_files(input_dir: str):
+    if input_dir.startswith("abfss://"):
+        # Databricks listing
+        items = dbutils.fs.ls(input_dir)  # noqa: F821 (dbutils exists in Databricks)
+        files = sorted([x.path for x in items if x.path.endswith(".csv") and "payroll_transactions_" in x.name])
+        if not files:
+            raise FileNotFoundError(f"No input CSV files found at: {input_dir}")
+        return files
+
+    # Local listing
     pattern = os.path.join(input_dir, "payroll_transactions_*.csv")
     files = sorted(glob.glob(pattern))
     if not files:
