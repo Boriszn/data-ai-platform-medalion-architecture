@@ -3,23 +3,53 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+# -----------------------------------------------------------------------------
+# config.py
+#
+# Purpose
+# - Central place for configuration constants used across the pipeline.
+# - Defines default local input/output locations.
+# - Defines folder names for Bronze/Silver/Gold outputs.
+# - Defines column names and the required schema for input CSV files.
+# - Defines a secret key setting used to generate a pseudonymous employee key.
+#
+# Notes
+# - DEFAULT_* paths are meant for local runs.
+# - When running on Databricks with ADLS (abfss://...), input_dir and output_dir
+#   are passed as parameters and override these defaults.
+# -----------------------------------------------------------------------------
+
+
 DEFAULT_INPUT_DIR = os.path.join("data", "raw")
 DEFAULT_OUTPUT_DIR = "data"
 
+# Output folders under the selected output_dir.
 BRONZE_DIRNAME = "bronze"
 SILVER_DIRNAME = "silver"
 GOLD_DIRNAME = "gold"
 LOGS_DIRNAME = "logs"
 
-# Environment variable used to build a pseudonymous employee key
+# Environment variable used to build a pseudonymous employee key.
+# The secret key supports pseudonymization of employee_id values.
+# A stable key is needed so the same employee_id maps to the same employee_key.
 HMAC_KEY_ENV = "data-ai_HMAC_KEY"
 
-# Development fallback (should be overridden in real deployments)
+# Development fallback key.
+# For production, set HMAC_KEY_ENV to a strong secret value.
 DEV_FALLBACK_HMAC_KEY = "dev-only-change-this"
 
 
 @dataclass(frozen=True)
 class Columns:
+    """
+    Column names used in the pipeline.
+
+    Input columns
+    - These are expected in the raw CSV files.
+
+    Pipeline-added columns
+    - These are created during processing to support traceability and reporting.
+    """
     employee_id: str = "employee_id"
     employee_name: str = "employee_name"
     iban: str = "iban"
@@ -31,14 +61,17 @@ class Columns:
     currency: str = "currency"
 
     # Added by pipeline
-    source_file: str = "source_file"
-    ingested_at: str = "ingested_at"
-    employee_key: str = "employee_key"
-    pay_month: str = "pay_month"
+    source_file: str = "source_file"      # input file name for traceability
+    ingested_at: str = "ingested_at"      # ingestion timestamp (UTC)
+    employee_key: str = "employee_key"    # pseudonymous key derived from employee_id
+    pay_month: str = "pay_month"          # normalized month date derived from pay_period
 
 
+# Convenience instance for referencing column names.
 COLS = Columns()
 
+# Required input schema.
+# The pipeline validates that each input CSV contains these columns.
 REQUIRED_INPUT_COLUMNS = [
     COLS.employee_id,
     COLS.employee_name,
@@ -51,7 +84,8 @@ REQUIRED_INPUT_COLUMNS = [
     COLS.currency,
 ]
 
-# Columns allowed in Silver after protection
+# Columns allowed in Silver after protection.
+# Direct identifiers are removed from Silver and replaced with employee_key.
 SILVER_COLUMNS = [
     COLS.employee_key,
     COLS.subsidiary_id,

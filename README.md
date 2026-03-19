@@ -1,4 +1,4 @@
-# data-ai Exercise 2 — Payroll Medallion Pipeline (Python)
+# data-ai — Payroll Medallion Pipeline (Python)
 
 ## Project description
 
