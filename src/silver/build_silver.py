@@ -103,7 +103,6 @@ def build_silver(df_bronze: pd.DataFrame) -> pd.DataFrame:
     require_amount_consistency(df)
     require_one_subsidiary_per_source_file(df)
 
-    # Type casting (kept as-is).
     # This section repeats numeric conversion.
     for c in [COLS.gross_amount, COLS.taxes_amount, COLS.net_amount]:
         df[c] = pd.to_numeric(df[c], errors="raise")
