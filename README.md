@@ -8,7 +8,7 @@ Input:
 - Three payroll CSV files for subsidiaries DE001, DE002, DE003.
 
 Output (Gold datasets):
- `controller_monthly_aggregates` — monthly totals per subsidiary**
+ `controller_monthly_aggregates` — monthly totals per subsidiary
   Payroll records are grouped by `subsidiary_id` and `pay_period`. For each group, the output calculates:
 
   - number of employees (distinct count)
@@ -16,7 +16,25 @@ Output (Gold datasets):
   - total taxes amount
   - total net amount
 
-`auditor_cross_subsidiary_totals` — monthly totals across all subsidiaries**
+````SQL
+-- controller_monthly_aggregates (monthly totals per subsidiary)
+SELECT
+  subsidiary_id,
+  pay_period,
+  COUNT(DISTINCT employee_key) AS employee_count,
+  ROUND(SUM(gross_amount), 2)  AS gross_total,
+  ROUND(SUM(taxes_amount), 2)  AS taxes_total,
+  ROUND(SUM(net_amount), 2)    AS net_total
+FROM silver_payroll_transactions
+GROUP BY
+  subsidiary_id,
+  pay_period
+ORDER BY
+  subsidiary_id,
+  pay_period;
+````
+
+`auditor_cross_subsidiary_totals` — monthly totals across all subsidiaries
   Payroll records are grouped by `pay_period` only (all subsidiaries together). For each month, the output calculates:
 
   - number of subsidiaries (distinct count)
@@ -25,6 +43,21 @@ Output (Gold datasets):
   - total taxes amount
   - total net amount
 
+````SQL
+-- auditor_cross_subsidiary_totals (monthly totals across all subsidiaries)
+SELECT
+  pay_period,
+  COUNT(DISTINCT subsidiary_id) AS subsidiary_count,
+  COUNT(DISTINCT employee_key)  AS employee_count,
+  ROUND(SUM(gross_amount), 2)   AS gross_total,
+  ROUND(SUM(taxes_amount), 2)   AS taxes_total,
+  ROUND(SUM(net_amount), 2)     AS net_total
+FROM silver_payroll_transactions
+GROUP BY
+  pay_period
+ORDER BY
+  pay_period;
+````
 
 The pipeline follows a simple Medallion structure:
 - Bronze: ingest and add ingestion metadata.
