@@ -68,7 +68,7 @@ def require_pay_period_format(df: pd.DataFrame) -> None:
     - ValueError if unexpected values are found.
     """
     # Expect YYYY-MM
-    pattern = re.compile(r"^\\d{4}-\\d{2}$")
+    pattern = re.compile(r"^\d{4}-\d{2}$")
     bad = df.loc[~df["pay_period"].astype(str).str.match(pattern), "pay_period"].unique().tolist()
     if bad:
         raise ValueError(f"Unexpected pay_period format values: {bad}")
