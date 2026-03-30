@@ -49,7 +49,7 @@ else:
 
 # Optional: set HMAC key via Databricks secrets and environment variables.
 # This supports a stable pseudonymous employee_key.
-# os.environ["AF_HMAC_KEY"] = dbutils.secrets.get(scope="<scope>", key="afileon-hmac-key")
+# os.environ["AF_HMAC_KEY"] = dbutils.secrets.get(scope="<scope>", key="af-hmac-key")
 
 # Run the pipeline using the resolved paths.
 run_pipeline(input_dir=str(input_dir), output_dir=str(output_dir))

@@ -31,7 +31,7 @@ except Exception:
 # -----------------------------------------------------------------------------
 
 
-_TMP_BASE = "/dbfs/tmp/afileon_ex2"
+_TMP_BASE = "/dbfs/tmp/af_ex2"
 
 
 def _is_abfss(path: str) -> bool:
