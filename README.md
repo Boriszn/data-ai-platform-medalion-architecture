@@ -1,11 +1,12 @@
-# data-ai — Payroll Medallion Pipeline (Python)
+# data-ai — Medallion Pipeline Architecture
+
+Project demonstrates Medalion Architecture based on DataBricks pipelines and Python libs (pandas, pyarrow). 
+Including usage of Unity Catalog for data goverment (masking, hashing, validation and protection).
 
 ## Project description
 
-This project implements Exercise 2 of the data-ai assessment.
-
 Input:
-- Three payroll CSV files for subsidiaries DE001, DE002, DE003.
+- Three payroll CSV files DE001, DE002, DE003.
 
 Output (Gold datasets):
  `controller_monthly_aggregates` — monthly totals per subsidiary
@@ -15,6 +16,8 @@ Output (Gold datasets):
   - total gross amount
   - total taxes amount
   - total net amount
+
+  ![alt text](image.png)
 
 ````SQL
 -- controller_monthly_aggregates (monthly totals per subsidiary)
